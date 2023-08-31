@@ -94,8 +94,8 @@ class GRAPE():
         self.w1 = self.w1 + lr * partial_w1
 
         # the limit of pulses are [-2,2]
-        self.w0 = np.clip(self.w0, -2, 2)
-        self.w1 = np.clip(self.w1, -2, 2)
+        self.w0 = np.clip(self.w0, -3, 3)
+        self.w1 = np.clip(self.w1, -3, 3)
 
         self.fidelity = np.abs(self.inner_product(A_list[-1], self.U_F)) ** 2 / 4
         return self.fidelity
@@ -116,13 +116,13 @@ class GRAPE():
 if __name__ == '__main__':
     G = GRAPE()
 
-    fid = []
+    infid = []
     i = 0
     while i < 1501:
-        fidelity = G.iteration_onestep(lr=0.5)
+        fidelity = G.iteration_onestep(lr=0.5+i/100)
         print('{}-th\t fidelity: {:4f}'.format(i, fidelity))
 
-        fid.append(fidelity)
+        infid.append(abs(1 - fidelity))
 
         if i % 10 == 0:
             plt.clf()
@@ -134,12 +134,18 @@ if __name__ == '__main__':
             plt.ylabel('pulse strength')
             plt.title('{}-th fidelity: {:4f}'.format(i, fidelity))
             plt.pause(0.01)
+        if i == 300:
+            plt.savefig('pulses_300.png')
 
         i += 1
 
+    plt.savefig('pulses_final.png')
     plt.show()
 
-    plt.plot(fid)
+    # use log scale to plot the fidelity
+    plt.plot(infid)
+    plt.yscale('log')
     plt.xlabel('iteration')
-    plt.ylabel('fidelity')
+    plt.ylabel('infidelity')
+    plt.savefig('infidelity.png')
     plt.show()
