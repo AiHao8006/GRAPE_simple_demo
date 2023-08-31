@@ -116,10 +116,13 @@ class GRAPE():
 if __name__ == '__main__':
     G = GRAPE()
 
+    fid = []
     i = 0
     while i < 1501:
         fidelity = G.iteration_onestep(lr=0.5)
         print('{}-th\t fidelity: {:4f}'.format(i, fidelity))
+
+        fid.append(fidelity)
 
         if i % 10 == 0:
             plt.clf()
@@ -127,9 +130,16 @@ if __name__ == '__main__':
             plt.plot(time_steps_stair0, pwc_pulse_stair0, 'b-')
             time_steps_stair1, pwc_pulse_stair1 = G.PWC_pulse(G.w1)
             plt.plot(time_steps_stair1, pwc_pulse_stair1, 'r-')
+            plt.xlabel('time')
+            plt.ylabel('pulse strength')
             plt.title('{}-th fidelity: {:4f}'.format(i, fidelity))
             plt.pause(0.01)
 
         i += 1
 
+    plt.show()
+
+    plt.plot(fid)
+    plt.xlabel('iteration')
+    plt.ylabel('fidelity')
     plt.show()
